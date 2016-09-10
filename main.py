@@ -21,7 +21,7 @@ def color_to_service_status(color):
 
 
 def log_request(command, chat, args):
-    print((chat.id if chat.username is None else "@" + chat.username) + " - /" + command + " " + ' '.join(args))
+    print((str(chat.id) if chat.username is None else "@" + chat.username) + " - /" + command + " " + ' '.join(args))
 
 
 @bot.command("status")
