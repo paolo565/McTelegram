@@ -54,18 +54,30 @@ def playerinfo_command(chat, args):
     """Tells you info about a user"""
     log_request("playerinfo", chat, args)
 
-    if len(args) != 1:
-        chat.send("/playerinfo Name/UUID")
+    if len(args) == 0:
+        chat.send("Ok, now tell me the username or the uuid", reply_to=chat, extra=botogram.ForceReply(data={
+            'force_reply': True,
+            'selective': True
+        }))
         return
 
+    reply_to_playerinfo(chat, args[0])
+
+
+@bot.message_matches("[\s\S]*")
+def on_message(chat, message):
+    reply_to_playerinfo(chat, message.text)
+
+
+def reply_to_playerinfo(chat, username_or_uuid):
     username = None
     premium = True
-    if len(args[0]) == 36:
-        uid = args[0].replace('-', '')
-    elif len(args[0]) == 32:
-        uid = args[0]
-    elif len(args[0]) <= 16:
-        success, premium, username, uid = mojangapi.get_uid_from_username(args[0])
+    if len(username_or_uuid) == 36:
+        uid = username_or_uuid.replace('-', '')
+    elif len(username_or_uuid) == 32:
+        uid = username_or_uuid
+    elif len(username_or_uuid) <= 16:
+        success, premium, username, uid = mojangapi.get_uid_from_username(username_or_uuid)
         if not success:
             chat.send("Failed to fetch data about the user, retry later.")
             return
